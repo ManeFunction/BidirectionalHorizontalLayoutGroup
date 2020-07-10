@@ -77,7 +77,6 @@ namespace NoSuchStudio.UI {
         protected void SetChildrenAlongAxisWithReverse(int axis, bool isVertical, bool isReverse) {
             float size = rectTransform.rect.size[axis];
             bool controlSize = (axis == 0 ? m_ChildControlWidth : m_ChildControlHeight);
-            bool useScale = (axis == 0 ? m_ChildScaleWidth : m_ChildScaleHeight);
             bool childForceExpandSize = (axis == 0 ? m_ChildForceExpandWidth : m_ChildForceExpandHeight);
             float alignmentOnAxis = GetAlignmentOnAxis(axis);
 
@@ -88,15 +87,14 @@ namespace NoSuchStudio.UI {
                     RectTransform child = rectChildren[i];
                     float min, preferred, flexible;
                     GetChildSizes(child, axis, controlSize, childForceExpandSize, out min, out preferred, out flexible);
-                    float scaleFactor = useScale ? child.localScale[axis] : 1f;
 
                     float requiredSpace = Mathf.Clamp(innerSize, min, flexible > 0 ? size : preferred);
-                    float startOffset = GetStartOffsetWithReverse(axis, isReverse, requiredSpace * scaleFactor);
+                    float startOffset = GetStartOffsetWithReverse(axis, isReverse, requiredSpace);
                     if (controlSize) {
-                        SetChildAlongAxisWithScaleAndDirection(child, axis, isReverse, startOffset, requiredSpace, scaleFactor);
+                        SetChildAlongAxisWithScaleAndDirection(child, axis, isReverse, startOffset, requiredSpace);
                     } else {
                         float offsetInCell = (requiredSpace - child.sizeDelta[axis]) * alignmentOnAxis;
-                        SetChildAlongAxisWithScaleAndDirection(child, axis, isReverse, startOffset + offsetInCell, scaleFactor);
+                        SetChildAlongAxisWithScaleAndDirection(child, axis, isReverse, startOffset + offsetInCell);
                     }
                 }
             } else {
@@ -119,17 +117,16 @@ namespace NoSuchStudio.UI {
                     RectTransform child = rectChildren[i];
                     float min, preferred, flexible;
                     GetChildSizes(child, axis, controlSize, childForceExpandSize, out min, out preferred, out flexible);
-                    float scaleFactor = useScale ? child.localScale[axis] : 1f;
 
                     float childSize = Mathf.Lerp(min, preferred, minMaxLerp);
                     childSize += flexible * itemFlexibleMultiplier;
                     if (controlSize) {
-                        SetChildAlongAxisWithScaleAndDirection(child, axis, isReverse, pos, childSize, scaleFactor);
+                        SetChildAlongAxisWithScaleAndDirection(child, axis, isReverse, pos, childSize);
                     } else {
                         float offsetInCell = (childSize - child.sizeDelta[axis]) * alignmentOnAxis;
-                        SetChildAlongAxisWithScaleAndDirection(child, axis, isReverse, pos + offsetInCell, scaleFactor);
+                        SetChildAlongAxisWithScaleAndDirection(child, axis, isReverse, pos + offsetInCell);
                     }
-                    pos += childSize * scaleFactor + spacing;
+                    pos += childSize + spacing;
                 }
             }
         }
@@ -141,7 +138,7 @@ namespace NoSuchStudio.UI {
         /// <param name="axis">The axis to set the position and size along. 0 is horizontal and 1 is vertical.</param>
         /// <param name="pos">The position from the left side or top.</param>
         /// <param name="size">The size.</param>
-        protected void SetChildAlongAxisWithScaleAndDirection(RectTransform rect, int axis, bool reverse, float pos, float size, float scaleFactor) {
+        protected void SetChildAlongAxisWithScaleAndDirection(RectTransform rect, int axis, bool reverse, float pos, float size) {
             if (rect == null)
                 return;
 
@@ -167,11 +164,11 @@ namespace NoSuchStudio.UI {
             rect.sizeDelta = sizeDelta;
 
             Vector2 anchoredPosition = rect.anchoredPosition;
-            anchoredPosition[axis] = (axis == 0 ^ reverse) ? (pos + size * rect.pivot[axis] * scaleFactor) : (-pos - size * (1f - rect.pivot[axis]) * scaleFactor);
+            anchoredPosition[axis] = (axis == 0 ^ reverse) ? (pos + size * rect.pivot[axis]) : (-pos - size * (1f - rect.pivot[axis]));
             rect.anchoredPosition = anchoredPosition;
         }
 
-        protected void SetChildAlongAxisWithScaleAndDirection(RectTransform rect, int axis, bool isReverse, float pos, float scaleFactor) {
+        protected void SetChildAlongAxisWithScaleAndDirection(RectTransform rect, int axis, bool isReverse, float pos) {
             if (rect == null)
                 return;
 
@@ -191,7 +188,7 @@ namespace NoSuchStudio.UI {
             // Debug.LogFormat("here {0} size external2!\nanchmin: {1}\nanchmax: {2}", name, rect.anchorMin, rect.anchorMax);
 
             Vector2 anchoredPosition = rect.anchoredPosition;
-            anchoredPosition[axis] = (axis == 0 ^ isReverse) ? (pos + rect.sizeDelta[axis] * rect.pivot[axis] * scaleFactor) : (-pos - rect.sizeDelta[axis] * (1f - rect.pivot[axis]) * scaleFactor);
+            anchoredPosition[axis] = (axis == 0 ^ isReverse) ? (pos + rect.sizeDelta[axis] * rect.pivot[axis]) : (-pos - rect.sizeDelta[axis] * (1f - rect.pivot[axis]));
             rect.anchoredPosition = anchoredPosition;
         }
 

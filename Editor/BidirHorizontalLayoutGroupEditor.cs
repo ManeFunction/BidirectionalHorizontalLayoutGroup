@@ -54,15 +54,6 @@ namespace NoSuchStudio.UI
             EditorGUIUtility.labelWidth = 0;
 
             rect = EditorGUILayout.GetControlRect();
-            rect = EditorGUI.PrefixLabel(rect, -1, EditorGUIUtility.TrTextContent("Use Child Scale"));
-            rect.width = Mathf.Max(50, (rect.width - 4) / 3);
-            EditorGUIUtility.labelWidth = 50;
-            ToggleLeft(rect, m_ChildScaleWidth, EditorGUIUtility.TrTextContent("Width"));
-            rect.x += rect.width + 2;
-            ToggleLeft(rect, m_ChildScaleHeight, EditorGUIUtility.TrTextContent("Height"));
-            EditorGUIUtility.labelWidth = 0;
-
-            rect = EditorGUILayout.GetControlRect();
             rect = EditorGUI.PrefixLabel(rect, -1, EditorGUIUtility.TrTextContent("Child Force Expand"));
             rect.width = Mathf.Max(50, (rect.width - 4) / 3);
             EditorGUIUtility.labelWidth = 50;
